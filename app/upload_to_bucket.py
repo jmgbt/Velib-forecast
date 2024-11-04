@@ -1,23 +1,27 @@
 import os
 from google.cloud import storage
 
-def upload_json_files(bucket_name):
+def upload_json_files():
     """Uploads all JSON files in the current directory to the specified bucket.
 
     Args:
         bucket_name: The name of the bucket to upload to.
     """
 
-    storage_client = storage.Client.from_service_account_json('/home/jmgobet/.gcp_keys/velib-key.json')
-    bucket = storage_client.bucket(bucket_name)
+    storage_client = storage.Client(project=os.getenv('GCP_PROJECT'))
+    bucket = storage_client.bucket(os.getenv('GS_BUCKET_VELIB_STATUS'))
 
-    for filename in os.listdir('.'):
-        if filename.endswith('.json'):
+    velib_status_path ='./data/velib_status'
+    for filename in os.listdir(velib_status_path):
+        if filename.endswith('.jsonl'):
+            full_path = os.path.join(velib_status_path, filename)
+            print(filename)
+            print(full_path)
             blob = bucket.blob(filename)
-            blob.upload_from_filename(filename)
-            print(f"File {filename} uploaded to {bucket_name}.")
+            blob.upload_from_filename(full_path)
+            print(f"File {full_path} uploaded to {os.getenv('GS_BUCKET')}.")
 
 
 
 if __name__ == "__main__":
-    upload_json_files("json_velib")
+    upload_json_files()

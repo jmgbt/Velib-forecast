@@ -16,9 +16,9 @@ def fetch_station_info():
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:
-            # json.dump(data, f, indent=4)
-            # json.dump(data['data']['stations'], f, indent=4)
             for station in data['data']['stations']:
+                if "rental_methods" in station:
+                    del station['rental_methods']
                 f.write(json.dumps(station) + '\n')
 
         print(f"Station info fetched and saved to {filename}")

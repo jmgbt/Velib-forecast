@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS velib.stations (
   station_latitude FLOAT64 NOT NULL,
   station_longitude FLOAT64 NOT NULL,
   station_capacity INT64 NOT NULL,
-  rental_methods STRING NOT NULL,
   PRIMARY KEY(station_id) NOT ENFORCED
 );
 

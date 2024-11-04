@@ -16,7 +16,8 @@ def fetch_station_info():
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:
-            json.dump(data, f, indent=4)
+            # json.dump(data, f, indent=4)
+            json.dump(data['data']['stations'], f, indent=4)
 
         print(f"Station info fetched and saved to {filename}")
     else:

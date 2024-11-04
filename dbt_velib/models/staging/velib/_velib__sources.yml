@@ -4,3 +4,6 @@ sources:
   - name: velib
     tables:
       - name: stations
+  - name: Airbyte
+    tables:
+      - name: velib_status

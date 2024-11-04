@@ -12,7 +12,7 @@ def fetch_station_info():
 
         # Create a timestamp for the filename
         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"station_info_{timestamp}.json"
+        filename = f"../data/station_info_{timestamp}.json"
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:

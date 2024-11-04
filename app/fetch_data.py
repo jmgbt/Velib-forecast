@@ -12,11 +12,13 @@ def fetch_and_save_velib_data():
 
         # Create a timestamp for the filename
         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"../data/velib_station_status_{timestamp}.json"
+        filename = f"./data/velib_station_status_{timestamp}.jsonl"
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:
-            json.dump(data, f, indent=4)
+            for station in data['data']['stations']:
+                f.write(json.dumps(station) + '\n')
+
 
         print(f"Station status data fetched and saved to {filename}")
     else:

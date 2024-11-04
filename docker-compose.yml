@@ -10,7 +10,7 @@ services:
             - POSTGRES_USER=$POSTGRES_USER
         volumes:
             - velib:/var/lib/postgresql/data
-            - ./iniit_velib_db.sql:/docker-entrypoint-initdb.d/iniit_velib_db.sql
+            - ./sql/iniit_velib_db.sql:/docker-entrypoint-initdb.d/iniit_velib_db.sql
         restart: always
 
 

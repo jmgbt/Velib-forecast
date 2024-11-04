@@ -5,3 +5,4 @@ alembic
 .venv
 .alembic.ini
 .README.md
+data

@@ -16,7 +16,9 @@ def fetch_and_save_velib_data():
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:
-            json.dump(data, f, indent=4)
+            for station in data['data']['stations']:
+                f.write(json.dumps(station) + '\n')
+
 
         print(f"Station status data fetched and saved to {filename}")
     else:

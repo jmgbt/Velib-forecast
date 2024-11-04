@@ -17,6 +17,7 @@ def fetch_station_info():
         # Save the JSON data to a file
         with open(filename, 'w') as f:
             for station in data['data']['stations']:
+                #ignore the rental_methods field - we don't need it and it's a pain
                 if "rental_methods" in station:
                     del station['rental_methods']
                 f.write(json.dumps(station) + '\n')

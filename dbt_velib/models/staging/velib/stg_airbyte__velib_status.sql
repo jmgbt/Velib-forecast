@@ -1,9 +1,5 @@
 -- stg_airbyte__station_status.sql
 
-{{ config(
-    alias='stg_velib__status'
-) }}
-
 select
  station_id
  , TIMESTAMP_SECONDS(CAST(last_reported as INT64)) as last_reported

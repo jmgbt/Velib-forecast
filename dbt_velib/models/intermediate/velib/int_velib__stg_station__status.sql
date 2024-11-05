@@ -2,10 +2,6 @@
 
 -- 100% coded by ClaudeGPT since I did not have time
 
-{{ config(
-    alias='int_velib__status_10min'
-) }}
-
 WITH distinct_values AS (
    SELECT
        station_ID,
@@ -13,7 +9,7 @@ WITH distinct_values AS (
        AVG(mechanical_bikes_available) as mechanical_bikes_available,
        AVG(ebikes_available) as ebikes_available
    FROM
-       {{ source('velib','stg_velib__status') }}
+       {{ ref('stg_airbyte__velib_status') }}
    GROUP BY station_ID, last_reported_1O
 ),
 time_bounds AS (
@@ -28,8 +24,8 @@ time_intervals AS (
    SELECT station_ID, interval_time
    FROM time_bounds,
    UNNEST(GENERATE_TIMESTAMP_ARRAY(min_time, max_time, INTERVAL 10 MINUTE)) as interval_time
-),
-all_intervals AS (
+)
+-- all_intervals AS (
    SELECT
        t.station_ID,
        t.interval_time as last_reported_1O,
@@ -56,27 +52,3 @@ all_intervals AS (
    LEFT JOIN distinct_values d
    ON t.interval_time = d.last_reported_1O
    AND t.station_ID = d.station_ID
-)
-SELECT
-   station_ID,
-   last_reported_1O,
-   COALESCE(
-       mechanical_actual_value,
-       mechanical_value_before +
-       (TIMESTAMP_DIFF(last_reported_1O, time_before, SECOND) *
-       (mechanical_value_after - mechanical_value_before) /
-       NULLIF(TIMESTAMP_DIFF(time_after, time_before, SECOND), 0))
-   ) AS mechanical_bikes_available_interpolee,
-   COALESCE(
-       ebikes_actual_value,
-       ebikes_value_before +
-       (TIMESTAMP_DIFF(last_reported_1O, time_before, SECOND) *
-       (ebikes_value_after - ebikes_value_before) /
-       NULLIF(TIMESTAMP_DIFF(time_after, time_before, SECOND), 0))
-   ) AS ebikes_available_interpolee
-FROM
-   all_intervals a
-WHERE last_reported_1O <= (SELECT max_time FROM time_bounds b WHERE b.station_ID = a.station_ID)
-ORDER BY
-   station_ID,
-   last_reported_1O

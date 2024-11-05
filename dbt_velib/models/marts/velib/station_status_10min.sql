@@ -6,9 +6,10 @@ WITH distinct_values AS (
        station_ID,
        last_reported_1O,
        AVG(mechanical_bikes_available) as mechanical_bikes_available,
-       AVG(ebikes_available) as ebikes_available
+       AVG(ebikes_available) as ebikes_available,
+       AVG(num_docks_available) as num_docks_available
    FROM
-       {{ ref('stg_airbyte__velib_status') }}
+       {{ ref('stg_airbyte__velib_status') }} as status
    GROUP BY station_ID, last_reported_1O
 ),
 time_bounds AS (
@@ -20,7 +21,8 @@ time_bounds AS (
    GROUP BY station_ID
 )
 SELECT
-   station_ID,
+   a.station_ID,
+   station_name, station_latitude, station_longitude,
    last_reported_1O,
    COALESCE(
        mechanical_actual_value,
@@ -35,9 +37,18 @@ SELECT
        (TIMESTAMP_DIFF(last_reported_1O, time_before, SECOND) *
        (ebikes_value_after - ebikes_value_before) /
        NULLIF(TIMESTAMP_DIFF(time_after, time_before, SECOND), 0))
-   ) AS ebikes_available_interpolee
+   ) AS ebikes_available_interpolee,
+   COALESCE(
+       docks_actual_value,
+       docks_value_before +
+       (TIMESTAMP_DIFF(last_reported_1O, time_before, SECOND) *
+       (docks_value_after - docks_value_before) /
+       NULLIF(TIMESTAMP_DIFF(time_after, time_before, SECOND), 0))
+   ) AS docks_available_interpolee
 FROM
    {{ ref('int_velib__stg_station__status') }} AS a
+LEFT JOIN {{ ref('stg_velib__stations') }} as info on info.station_ID = a.station_ID
+
 WHERE last_reported_1O <= (SELECT max_time FROM time_bounds b WHERE b.station_ID = a.station_ID)
 ORDER BY
    station_ID,

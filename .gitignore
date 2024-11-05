@@ -17,3 +17,5 @@ tests/temp/*
 !tests/temp/.gitkeep
 !**/.gitkeep
 !**/tests/data/*
+data
+logs

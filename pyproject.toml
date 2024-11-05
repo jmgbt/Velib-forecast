@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "05-best-practices"
+name = "velib-forecast"
 version = "0.1.0"
 description = ""
 authors = ["S. Saunier <seb@lewagon.org>"]
@@ -18,6 +18,9 @@ requests = "^2.32.3"
 google-cloud = "^0.34.0"
 google = "^3.0.0"
 google-cloud-storage = "^2.18.2"
+dbt = "^1.0.0.38.21"
+dbt-core = "^1.8.8"
+dbt-bigquery = "^1.8.3"
 
 [tool.poetry.dev-dependencies]
 ipython = "^8.4.0"
@@ -44,4 +47,3 @@ include_trailing_comma = true
 
 [tool.pytest.ini_options]
 markers = ["optional: not required, nor saved in test_output.txt"]
-

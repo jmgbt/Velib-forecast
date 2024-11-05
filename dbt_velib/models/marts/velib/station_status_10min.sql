@@ -22,7 +22,7 @@ time_bounds AS (
 )
 SELECT
    a.station_ID,
-   station_name, station_latitude, station_longitude,
+   name, lat, lon,
    last_reported_1O,
    COALESCE(
        mechanical_actual_value,

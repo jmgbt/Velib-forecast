@@ -1,0 +1,6 @@
+version: 2
+
+sources:
+  - name: velib
+    tables:
+      - name: stg_velib__status

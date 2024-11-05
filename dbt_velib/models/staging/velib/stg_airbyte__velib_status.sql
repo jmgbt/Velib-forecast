@@ -1,7 +1,21 @@
 -- stg_airbyte__station_status.sql
 
+{{ config(
+    alias='stg_velib__status'
+) }}
+
 select
- station_id, last_reported, num_bikes_available, num_docks_available
+ station_id
+ , TIMESTAMP_SECONDS(CAST(last_reported as INT64)) as last_reported
+, TIMESTAMP_TRUNC(
+    TIMESTAMP_SUB(
+        TIMESTAMP_SECONDS(CAST(last_reported as INT64)),
+        INTERVAL MOD(EXTRACT(MINUTE FROM TIMESTAMP_SECONDS(CAST(last_reported as INT64))), 10) MINUTE
+    ),
+    MINUTE
+) AS last_reported_1O
+
+ , num_docks_available
 
   ,CAST(JSON_EXTRACT_SCALAR(
     JSON_EXTRACT_ARRAY(num_bikes_available_types)[OFFSET(0)],

@@ -5,20 +5,21 @@ dbt_velib:
       job_execution_timeout_seconds: 300
       job_retries: 1
       location: europe-west1
-      method: service-account-json
+      # method: service-account-json
+      method: oauth
       priority: interactive
       project: dataengvelibforecast
       threads: 1
       type: bigquery
-      keyfile_json:
-        type: "service_account"
-        project_id: "dataengvelibforecast"
-        private_key_id: "{{ env_var('velib_private_key_id') }}"
-        private_key: "{{ env_var('velib_private_key') }}"
-        client_email: "compte-service-velib@dataengvelibforecast.iam.gserviceaccount.com"
-        client_id: "109562023373297660025"
-        auth_uri: "https://accounts.google.com/o/oauth2/auth"
-        token_uri: "https://oauth2.googleapis.com/token"
-        auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
-        client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/compte-service-velib%40dataengvelibforecast.iam.gserviceaccount.com"
+  #     keyfile_json:
+  #       type: "service_account"
+  #       project_id: "dataengvelibforecast"
+  #       private_key_id: "{{ env_var('velib_private_key_id') }}"
+  #       private_key: "{{ env_var('velib_private_key') }}"
+  #       client_email: "compte-service-velib@dataengvelibforecast.iam.gserviceaccount.com"
+  #       client_id: "109562023373297660025"
+  #       auth_uri: "https://accounts.google.com/o/oauth2/auth"
+  #       token_uri: "https://oauth2.googleapis.com/token"
+  #       auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs"
+  #       client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/compte-service-velib%40dataengvelibforecast.iam.gserviceaccount.com"
   target: dev

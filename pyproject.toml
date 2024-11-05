@@ -1,49 +1,28 @@
 [tool.poetry]
-name = "velib-forecast"
+name = "velib"
 version = "0.1.0"
 description = ""
-authors = ["S. Saunier <seb@lewagon.org>"]
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.8"
-fastapi = "^0.78.0"
-locust = "^2.9.0"
-numpy = "^1.22.4"
+python = "3.9.20"
+numpy = "1.21.0"
 pandas = "^1.4.2"
-uvicorn = {extras = ["standard"], version = "^0.17.6"}
-gunicorn = "^20.1.0"
-sentry-sdk = "^1.5.12"
+dbt-core = "^1.8.8"
+dbt-bigquery = "^1.8.3"
+apache-airflow = {version = "2.10.2", extras = ["google"]}
+psycopg2-binary = "^2.9.10"
+wtforms = "3.1.2"
 requests = "^2.32.3"
 google-cloud = "^0.34.0"
 google = "^3.0.0"
 google-cloud-storage = "^2.18.2"
-dbt = "^1.0.0.38.21"
-dbt-core = "^1.8.8"
-dbt-bigquery = "^1.8.3"
+setuptools = ">=66.1.1"
 
-[tool.poetry.dev-dependencies]
-ipython = "^8.4.0"
-black = "^22.3.0"
-isort = "^5.10.1"
-PyYAML = "^6.0"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 160
-target-version = ["py38"]
-
-[tool.isort]
-profile = "black"
-line_length = 160
-multi_line_output = 3
-include_trailing_comma = true
-
-[tool.pytest.ini_options]
-markers = ["optional: not required, nor saved in test_output.txt"]

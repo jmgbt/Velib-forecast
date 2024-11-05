@@ -15,11 +15,9 @@ def upload_json_files():
     for filename in os.listdir(velib_status_path):
         if filename.endswith('.jsonl'):
             full_path = os.path.join(velib_status_path, filename)
-            print(filename)
-            print(full_path)
             blob = bucket.blob(filename)
             blob.upload_from_filename(full_path)
-            print(f"File {full_path} uploaded to {os.getenv('GS_BUCKET')}.")
+            print(f"File {full_path} uploaded to {os.getenv('GS_BUCKET_VELIB_STATUS')}.")
 
 
 

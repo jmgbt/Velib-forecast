@@ -6,3 +6,4 @@ alembic
 .alembic.ini
 .README.md
 data
+logs

@@ -48,7 +48,6 @@ SELECT
 FROM
    {{ ref('int_velib__stg_station__status') }} AS a
 LEFT JOIN {{ ref('stg_velib__stations') }} as info on info.station_ID = a.station_ID
-
 WHERE last_reported_1O <= (SELECT max_time FROM time_bounds b WHERE b.station_ID = a.station_ID)
 ORDER BY
    station_ID,

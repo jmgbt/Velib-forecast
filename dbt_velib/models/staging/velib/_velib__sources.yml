@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  # - name: velib
+  #   tables:
+  #     - name: station
+  - name: Airbyte
+    tables:
+      - name: velib_status
+      - name: station_info

@@ -12,7 +12,7 @@ def fetch_and_save_velib_data():
 
         # Create a timestamp for the filename
         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"./data/velib_station_status_{timestamp}.jsonl"
+        filename = f"./data_fetch/velib_station_status_{timestamp}.jsonl"
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:

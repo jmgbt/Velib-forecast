@@ -5,4 +5,15 @@ alembic
 .venv
 .alembic.ini
 .README.md
-data
+data_fetch
+#gitignore Airflow
+database/
+logs/**
+!**/.gitkeep
+airflow.cfg
+airflow.db
+webserver_config.py
+tests/temp/*
+!tests/temp/.gitkeep
+!**/.gitkeep
+!**/tests/data/*

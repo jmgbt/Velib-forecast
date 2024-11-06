@@ -19,6 +19,7 @@ google-cloud = "^0.34.0"
 google = "^3.0.0"
 google-cloud-storage = "^2.18.2"
 setuptools = ">=66.1.1"
+airbyte-api = "^0.52.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

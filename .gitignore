@@ -20,3 +20,4 @@ tests/temp/*
 data
 logs
 dags/__pycache__/
+dbt_velib/velib.json

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from pathlib import Path
 import requests
 import json
@@ -11,6 +12,8 @@ import time
 
 
 AIRFLOW_HOME = os.getenv("AIRFLOW_HOME")
+DBT_DIR = os.getenv("DBT_DIR")
+
 
 def fetch_and_save_velib_data():
     url = "https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json"
@@ -135,3 +138,22 @@ with DAG(
 
     fetch_spot_data >> upload_to_bucket >> trigger_airbyte
     # fetch_station_info >> upload_to_bucket
+
+
+with DAG(
+    "velib_workflow_dbt",
+    # default_args={"depends_on_past": False},
+    description="DAG to process velib workflow for DataEng project",
+    schedule_interval=None, #'*/10 * * * *', # every 10 minutes
+    catchup = False,
+    #depends_on_past=False,
+    start_date=pendulum.today("UTC")
+
+) as dbt_dag:
+
+    dbt_run = BashOperator(
+        task_id="dbt_run",
+        bash_command=f"dbt run --project-dir {DBT_DIR}",
+    )
+
+    dbt_run

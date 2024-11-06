@@ -26,11 +26,16 @@ services:
             - AIRFLOW__CORE__EXECUTOR=LocalExecutor
             - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:$POSTGRES_PASSWORD@postgres:5432/db
             - AIRFLOW__CORE__LOAD_EXAMPLES=false
+            # par EO pour dbt+airflow (1 line)
+            - GBQ_PROJECT_ID=dataengvelibforecast
+            - DBT_KEYFILE_PATH=/app/airflow/dbt_velib/velib.json
         volumes:
             - ./dags:/app/airflow/dags
             - ./data:/app/airflow/data
             - ./logs:/app/airflow/logs
             - ./data_fetch:/app/airflow/data_fetch
+            # par EO pour dbt+airflow (2 lines)
+            - ./dbt_velib:/app/airflow/dbt_velib
 
     webserver:
         build: .

@@ -25,7 +25,7 @@ def fetch_and_save_velib_data():
 
         # Create a timestamp for the filename
         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-        filename = f"./data_fetch/velib_station_status_{timestamp}.jsonl"
+        filename = f"./data/fetch/velib_station_status_{timestamp}.jsonl"
 
         # Save the JSON data to a file
         with open(filename, 'w') as f:
@@ -57,8 +57,8 @@ def trigger_airbyte():
     url = "https://api.airbyte.com/v1/applications/token"
 
     payload = {
-        "client_id": "91161352-4f8f-4298-a529-9ea628b64c84", #à mettre en os.environ
-        "client_secret": "Az0F0XDLIrNrCppWeYPZtyrRLbaEBDvL", #à mettre en os.environ
+        "client_id": os.getenv("airbyte_client_id"),
+        "client_secret": os.getenv("airbyte_client_secret"),
         "grant-type": "client_credentials"
     }
     headers = {
@@ -74,7 +74,7 @@ def trigger_airbyte():
 
     payload = {
         "jobType": "sync",
-        "connectionId": "e98c6545-08ae-4c9b-b933-558a8819afa5" #à mettre en os.environ
+        "connectionId": os.getenv("airbyte_connection_id")
     }
     headers = {
         "accept": "application/json",
@@ -94,8 +94,9 @@ def upload_json_files(**kwargs):
 
     gcs_hook = GCSHook(gcp_conn_id='my_gcs_conn_velib') #/!\ json gcp en dur dans le setting Airflow à transformer en secret
 
-    velib_status_path ='./data_fetch'
-    bucket = "velib_status"
+    velib_status_path ='./data/fetch'
+    bucket = os.getenv("GS_BUCKET_VELIB_STATUS")
+
     for filename in os.listdir(velib_status_path):
         if filename.endswith('.jsonl'):
             full_path_origin = os.path.join(velib_status_path, filename)
@@ -142,4 +143,3 @@ with DAG(
 
 
     fetch_spot_data >> upload_to_bucket >> trigger_airbyte >> dbt_run
-    # fetch_station_info >> upload_to_bucket

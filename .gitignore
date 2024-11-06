@@ -19,3 +19,4 @@ tests/temp/*
 !**/tests/data/*
 data
 logs
+dags/__pycache__/

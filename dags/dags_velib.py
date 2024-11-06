@@ -9,7 +9,7 @@ import requests
 import json
 import requests
 import time
-
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 
 AIRFLOW_HOME = os.getenv("AIRFLOW_HOME")
 DBT_DIR = os.getenv("DBT_DIR")
@@ -85,23 +85,23 @@ def trigger_airbyte():
     print(response.text)
 
 
-def upload_json_files():
+def upload_json_files(**kwargs):
     """Uploads all JSON files in the current directory to the specified bucket.
 
     Args:
         bucket_name: The name of the bucket to upload to.
     """
 
-    storage_client = storage.Client(project="dataengvelibforecast")  #à mettre en os.environ
-    bucket = storage_client.bucket("velib_status")  #à mettre en os.environ
+    gcs_hook = GCSHook(gcp_conn_id='my_gcs_conn_velib') #/!\ json gcp en dur dans le setting Airflow à transformer en secret
 
-    velib_status_path ='./data/velib_status'
+    velib_status_path ='./data_fetch'
+    bucket = "velib_status"
     for filename in os.listdir(velib_status_path):
         if filename.endswith('.jsonl'):
-            full_path = os.path.join(velib_status_path, filename)
-            blob = bucket.blob(filename)
-            blob.upload_from_filename(full_path)
-
+            full_path_origin = os.path.join(velib_status_path, filename)
+            gcs_hook.upload(bucket_name="velib_status",
+                    object_name=filename, # destination
+                    filename=full_path_origin) # origine
 
 
 with DAG(
@@ -135,25 +135,11 @@ with DAG(
     python_callable=trigger_airbyte,
     dag=dag)
 
-
-    fetch_spot_data >> upload_to_bucket >> trigger_airbyte
-    # fetch_station_info >> upload_to_bucket
-
-
-with DAG(
-    "velib_workflow_dbt",
-    # default_args={"depends_on_past": False},
-    description="DAG to process velib workflow for DataEng project",
-    schedule_interval=None, #'*/10 * * * *', # every 10 minutes
-    catchup = False,
-    #depends_on_past=False,
-    start_date=pendulum.today("UTC")
-
-) as dbt_dag:
-
     dbt_run = BashOperator(
         task_id="dbt_run",
         bash_command=f"dbt run --project-dir {DBT_DIR}",
-    )
+    dag=dag)
 
-    dbt_run
+
+    fetch_spot_data >> upload_to_bucket >> trigger_airbyte >> dbt_run
+    # fetch_station_info >> upload_to_bucket

@@ -7,6 +7,6 @@ SELECT station_ID
  , avg(ebikes_available_interpolee) AS ebikes_bikes_available_avg
  , avg(docks_available_interpolee) AS docks_bikes_available_avg
 FROM
- velib.station_status_10min
+ {{ ref('station_status_10min') }} as status
 GROUP BY 1, 2, 3, 4, 5
 ORDER BY 1, 5

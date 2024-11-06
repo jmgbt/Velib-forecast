@@ -105,7 +105,7 @@ with DAG(
     "velib_workflow",
     default_args={"depends_on_past": False},
     description="DAG to process velib workflow for DataEng project",
-    schedule_interval='*/10 * * * *', # every 10 minutes
+    schedule_interval=None, #'*/10 * * * *', # every 10 minutes
     catchup = False,
     #depends_on_past=False,
     start_date=pendulum.today("UTC")

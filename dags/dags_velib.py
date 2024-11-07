@@ -1,14 +1,10 @@
+from pathlib import Path
 import os
 from datetime import datetime, timedelta
-import pendulum
+import requests, json, time, pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
-from pathlib import Path
-import requests
-import json
-import requests
-import time
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 import logging
 
@@ -282,10 +278,7 @@ with DAG(
         bash_command=f"dbt run --project-dir {DBT_DIR}",
     dag=dag)
 
-
     fetch_spot_data >> upload_to_bucket >> trigger_airbyte_task >> wait_for_completion_task >> dbt_run
-
-
 
 with DAG(
     "velib_dbt_run",

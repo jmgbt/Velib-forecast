@@ -160,6 +160,20 @@ def trigger_airbyte(**context):
     except Exception as e:
         logging.error(f"Error in trigger_airbyte: {str(e)}")
         raise
+def get_airbyte_token():
+    """Get a fresh Airbyte API token"""
+    url = "https://api.airbyte.com/v1/applications/token"
+    payload = {
+        "client_id": os.getenv("airbyte_client_id"),
+        "client_secret": os.getenv("airbyte_client_secret"),
+        "grant-type": "client_credentials"
+    }
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()['access_token']
 
 
 def check_job_status(**context):
@@ -168,34 +182,30 @@ def check_job_status(**context):
         job_id = context['task_instance'].xcom_pull(task_ids='trigger_airbyte')
         logging.info(f"Checking status for job ID: {job_id}")
 
-        # Get token
-        url = "https://api.airbyte.com/v1/applications/token"
-        payload = {
-            "client_id": os.getenv("airbyte_client_id"),
-            "client_secret": os.getenv("airbyte_client_secret"),
-            "grant-type": "client_credentials"
-        }
-        headers = {
-            "accept": "application/json",
-            "content-type": "application/json"
-        }
-        response = requests.post(url, json=payload, headers=headers)
-        token = response.json()['access_token']
-
-        headers = {
-            "accept": "application/json",
-            "authorization": f"Bearer {token}"
-        }
-
         # Keep checking until job is complete
         max_attempts = 60  # Maximum number of attempts (60 minutes total with 1-minute intervals)
         attempt = 0
 
         while attempt < max_attempts:
+            # Get fresh token for each check
+            token = get_airbyte_token()
+            headers = {
+                "accept": "application/json",
+                "authorization": f"Bearer {token}"
+            }
+
             status_url = f"https://api.airbyte.com/v1/jobs/{job_id}"
             status_response = requests.get(status_url, headers=headers)
             status_data = status_response.json()
             logging.info(f"Status API Response: {status_data}")
+
+            # Handle 401 error explicitly
+            if status_response.status_code == 401:
+                logging.warning("Token expired, getting new token...")
+                token = get_airbyte_token()
+                headers["authorization"] = f"Bearer {token}"
+                status_response = requests.get(status_url, headers=headers)
+                status_data = status_response.json()
 
             # Extract status from response
             status = None

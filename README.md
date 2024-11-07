@@ -1,26 +1,28 @@
 # Velib-forecast
 
 ## API Information
-- https://www.data.gouv.fr/fr/datasets/velib-velos-et-bornes-disponibilite-temps-reel/
 
-- https://opendata.paris.fr/explore/dataset/velib-disponibilite-en-temps-reel/information/?disjunctive.name&disjunctive.is_installed&disjunctive.is_renting&disjunctive.is_returning&disjunctive.nom_arrondissement_communes
+
+
+
+---
+
+# Velib-forecast Project
+
+This project sets up a data pipeline to fetch, process, and analyze data from the Velib bike-sharing API. The entire pipeline is orchestrated using **Apache Airflow** and includes data ingestion, transformation, and visualization. Each step in the pipeline is executed by scheduled Airflow DAGs and leverages the following tools: **Google Cloud Storage (GCS)**, **Airbyte**, **BigQuery**, **dbt**, and **Looker**.
 
 ## Data souces
 - [Availability](https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_status.json)
 - [Station Information](https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole/station_information.json)
 Here’s the `README.md` formatted according to GitHub's basic writing and formatting syntax:
 
----
-
-# Velib Data Pipeline Project
-
-This project sets up a data pipeline to fetch, process, and analyze data from the Velib bike-sharing API. The entire pipeline is orchestrated using **Apache Airflow** and includes data ingestion, transformation, and visualization. Each step in the pipeline is executed by scheduled Airflow DAGs and leverages the following tools: **Google Cloud Storage (GCS)**, **Airbyte**, **BigQuery**, **dbt**, and **Looker**.
-
 ## Project Steps
-
 ### 1. Request Data from the Velib API
 - **Description**: Every 10 minutes, data is requested from the Velib API, which provides real-time information about the availability of bikes and docking stations.
-- **API Documentation Summary**: The Velib API provides endpoints for accessing station information and bike availability. Each response includes a list of stations with attributes such as `station_id`, `name`, `bikes_available`, `docks_available`, etc.
+- **API Documentation Summary**: The Velib API provides endpoints for accessing station information and bike availability. Each response includes a list of stations with attributes such as `station_id`, `name`, `bikes_available`, `docks_available`, etc
+***see***
+  - https://www.data.gouv.fr/fr/datasets/velib-velos-et-bornes-disponibilite-temps-reel/
+  - https://opendata.paris.fr/explore/dataset/velib-disponibilite-en-temps-reel/information/?disjunctive.name&disjunctive.is_installed&disjunctive.is_renting&disjunctive.is_returning&disjunctive.nom_arrondissement_communes
 - **Airflow Implementation**: 
   - An Airflow task uses the `requests` library to pull data from the API at a 10-minute interval.
   - The API key and endpoint are stored as environment secrets for security.

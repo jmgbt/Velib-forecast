@@ -100,7 +100,7 @@ def upload_json_files(**kwargs):
     for filename in os.listdir(velib_status_path):
         if filename.endswith('.jsonl'):
             full_path_origin = os.path.join(velib_status_path, filename)
-            gcs_hook.upload(bucket_name="velib_status",
+            gcs_hook.upload(bucket_name="velib_status_new",
                     object_name=filename, # destination
                     filename=full_path_origin) # origine
 

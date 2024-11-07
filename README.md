@@ -1,12 +1,3 @@
-# Velib-forecast
-
-## API Information
-
-
-
-
----
-
 # Velib-forecast Project
 
 This project sets up a data pipeline to fetch, process, and analyze data from the Velib bike-sharing API. The entire pipeline is orchestrated using **Apache Airflow** and includes data ingestion, transformation, and visualization. Each step in the pipeline is executed by scheduled Airflow DAGs and leverages the following tools: **Google Cloud Storage (GCS)**, **Airbyte**, **BigQuery**, **dbt**, and **Looker**.

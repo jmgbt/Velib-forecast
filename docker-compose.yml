@@ -37,7 +37,7 @@ services:
             - ./dags:/app/airflow/dags
             - ./data:/app/airflow/data
             - ./logs:/app/airflow/logs
-            - ./data_fetch:/app/airflow/data_fetch
+            - ./data/fetch:/app/airflow/data/fetch
             # par EO pour dbt+airflow (1 lines)
             - ./dbt_velib:/app/airflow/dbt_velib
 

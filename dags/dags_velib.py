@@ -10,8 +10,6 @@ import json
 import requests
 import time
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
-from airflow.providers.airbyte.operators.airbyte import AirbyteTriggerSyncOperator
-from airflow.providers.airbyte.sensors.airbyte import AirbyteJobSensor
 import logging
 
 AIRFLOW_HOME = os.getenv("AIRFLOW_HOME")
@@ -75,24 +73,30 @@ def upload_json_files(**kwargs):
                     object_name=filename, # destination
                     filename=full_path_origin) # origine
 
+# Coded by ClaudeGPT (time pressure)
+def get_airbyte_token():
+    """Get a fresh Airbyte API token"""
+    url = "https://api.airbyte.com/v1/applications/token"
+    payload = {
+        "client_id": os.getenv("airbyte_client_id"),
+        "client_secret": os.getenv("airbyte_client_secret"),
+        "grant-type": "client_credentials"
+    }
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json"
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    return response.json()['access_token']
 
+# Coded by ClaudeGPT (time pressure)
 def trigger_airbyte(**context):
     """Triggers Airbyte sync and returns job ID"""
     logging.info("Starting trigger_airbyte function")
     try:
-        # Get token
-        url = "https://api.airbyte.com/v1/applications/token"
-        payload = {
-            "client_id": os.getenv("airbyte_client_id"),
-            "client_secret": os.getenv("airbyte_client_secret"),
-            "grant-type": "client_credentials"
-        }
-        headers = {
-            "accept": "application/json",
-            "content-type": "application/json"
-        }
-        response = requests.post(url, json=payload, headers=headers)
-        token = response.json()['access_token']
+        # Get a fresh token
+        token = get_airbyte_token()
+
         logging.info("Successfully obtained access token")
 
         # First, check for running jobs
@@ -160,22 +164,8 @@ def trigger_airbyte(**context):
     except Exception as e:
         logging.error(f"Error in trigger_airbyte: {str(e)}")
         raise
-def get_airbyte_token():
-    """Get a fresh Airbyte API token"""
-    url = "https://api.airbyte.com/v1/applications/token"
-    payload = {
-        "client_id": os.getenv("airbyte_client_id"),
-        "client_secret": os.getenv("airbyte_client_secret"),
-        "grant-type": "client_credentials"
-    }
-    headers = {
-        "accept": "application/json",
-        "content-type": "application/json"
-    }
-    response = requests.post(url, json=payload, headers=headers)
-    return response.json()['access_token']
 
-
+# Coded by ClaudeGPT (time pressure)
 def check_job_status(**context):
     """Checks Airbyte job status until completion"""
     try:
@@ -250,12 +240,12 @@ default_args = {
     'email_on_retry': False,
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
-    'execution_timeout': timedelta(hours=2),  # Add this
+    'execution_timeout': timedelta(hours=2)
 }
 
 with DAG(
     "velib_workflow",
-    default_args=default_args,  # Use the consolidated default_args
+    default_args=default_args,
     description="DAG to process velib workflow for DataEng project",
     schedule_interval=None,
     catchup=False,
@@ -299,7 +289,7 @@ with DAG(
 
 with DAG(
     "velib_dbt_run",
-    default_args=default_args,  # Use the consolidated default_args
+    default_args=default_args,
     description="DAG to call dbt run independently",
     schedule_interval=None,
     catchup=False,
